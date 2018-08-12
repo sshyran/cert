@@ -9,6 +9,7 @@
   loop_control:
     label: "{{ item | basename }}"
   connection: local
+  ignore_errors: yes
 
 - name: authorize public ssh keys
   authorized_key:
