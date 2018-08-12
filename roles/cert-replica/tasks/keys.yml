@@ -1,0 +1,22 @@
+---
+# steps taken from role ivansible.lin-enter task keys.yml
+
+- name: fix local key files permissions for ssh-keygen
+  file:
+    path: "{{ item }}"
+    mode: 0600
+  loop: "{{ certbot_replica_ssh_keys }}"
+  loop_control:
+    label: "{{ item | basename }}"
+  connection: local
+
+- name: authorize public ssh keys
+  authorized_key:
+    user: "{{ certbot_replica_user }}"
+    key: "{{ lookup('pipe', 'ssh-keygen -y -f \"{{ item }}\"') }}"
+    comment: "{{ item | basename }}"
+    state: present
+  loop: "{{ certbot_replica_ssh_keys }}"
+  loop_control:
+    label: "{{ item | basename }}"
+...

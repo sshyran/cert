@@ -1,5 +1,70 @@
 ---
-- name: ROLENAME root action 1
-  debug:
-    msg: action 1
+- name: add certbot ppa repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+    filename: certbot
+    update_cache: yes
+  tags: le_replica_install
+
+- name: install certbot and rsync packages
+  apt:
+    name:
+      - certbot      # creates /etc/letsecnrypt
+      - rsync        # rsync client
+      - python3-pip  # just in case
+    install_recommends: no
+  tags: le_replica_install
+
+
+- name: create unix group for letsencrypt certificate access
+  group:
+    name: "{{ certbot_group }}"
+    state: present
+  tags: le_replica_group
+
+- name: grant certbot group access to letsencrypt files
+  file:
+    path: /etc/letsencrypt/{{ item }}
+    state: directory
+    owner: root
+    group: "{{ certbot_group }}"
+    mode: 0750
+  loop:
+    - archive
+    - live
+  tags: le_replica_group
+
+
+- name: configure sudoers
+  import_tasks: sudo.yml
+  tags: le_replica_sudo
+
+- name: authorize ssh keys with pull user
+  import_tasks: keys.yml
+  tags: le_replica_ssh
+
+
+- name: disable certbot certificate renewal service
+  systemd:
+    name: certbot.timer
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  tags: le_replica_receive
+
+- name: ensure directory for log file
+  file:
+    path: /var/log/letsencrypt
+    state: directory
+    owner: root
+    mode: 0700
+  tags: le_replica_receive
+
+- name: create post-receive handler script
+  template:
+    src: certbot-post-receive.sh
+    dest: /usr/local/sbin/certbot-post-receive.sh
+    owner: root
+    mode: 0700
+  tags: le_replica_receive
 ...

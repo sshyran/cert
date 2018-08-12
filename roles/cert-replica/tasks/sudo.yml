@@ -1,0 +1,28 @@
+---
+# steps taken from role ivansible.lin-enter task tune.yml
+
+- name: remove requiretty from sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^(Defaults\s+requiretty.*)'
+    state: absent
+    backup: yes
+
+- name: enable password-less sudo for pull user
+  copy:
+    content: |
+      # Allow sudo group members to execute commands without password
+      %sudo  ALL=(ALL) NOPASSWD:ALL
+      {{ certbot_replica_user }}  ALL=(ALL) NOPASSWD:ALL
+    dest: /etc/sudoers.d/99-nopasswd
+    owner: root
+    mode: 0440
+
+- name: remove old-style no-passwd file
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/sudoers.d/99_vagrant
+    - /etc/sudoers.d/99_vanko
+...

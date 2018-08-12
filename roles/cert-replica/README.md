@@ -1,7 +1,5 @@
 # ivansible.letsencrypt-replica
-This role performs:
- - action1;
- - action2;
+This role configures a host for receiving letsencrypt certificates from certbot master host.
 
 
 ## Requirements
@@ -13,14 +11,20 @@ None
 
 Available variables are listed below, along with default values.
 
-    variable1: 1
-    variable2: 2
+    certbot_replica_user: "{{ ansible_user_id }}"
+Certbot master will access replica via rsync/ssh using this user
 
+    certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
+Keys for ssh access from the certbot master host.
 
 ## Tags
 
-- `role1_tag1` -- action1
-- `role1_tag2` -- action2
+- `le_replica_install` -- install certbot and rsync packages
+- `le_replica_group` -- grant certbot group access to letsencrypt files
+- `le_replica_sudo` -- configure sudoers
+- `le_replica_ssh` -- authorize ssh keys with pull user
+- `le_replica_receive` -- disable certbot certificate renewal service
+- `le_replica_receive` -- create post-receive handler script
 
 
 ## Dependencies
@@ -33,8 +37,6 @@ None
     - hosts: vagrant-boxes
       roles:
          - role: ivansible.letsencrypt-replica
-           variable1: 1
-           variable2: 2
 
 
 ## License
