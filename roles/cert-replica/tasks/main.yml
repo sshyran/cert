@@ -7,4 +7,15 @@
 - name: become root
   import_tasks: root.yml
   become: yes
+
+- name: setup certbot master
+  import_role:
+    name: ivansible.letsencrypt-master
+  vars:
+    certbot_master_replica_hosts: "{{ ansible_play_hosts }}"
+  delegate_to: "{{ certbot_master_host }}"
+  run_once: yes
+  when: certbot_master_host is defined
+
+- meta: flush_handlers
 ...

@@ -2,6 +2,10 @@
 - name: add certbot ppa repository
   apt_repository:
     repo: ppa:certbot/certbot
+    # if lsb_release executable is not installed on target,
+    # the python aptsource module defaults to the codename "sid"
+    # and fails. as a workaround, set codename here explicitly.
+    codename: "{{ ansible_lsb.codename }}"
     filename: certbot
     update_cache: yes
   tags: le_replica_install
@@ -13,6 +17,7 @@
       - rsync        # rsync client
       - python3-pip  # just in case
     install_recommends: no
+  notify: run certbot once to create directory structure in /etc
   tags: le_replica_install
 
 
@@ -52,12 +57,24 @@
     daemon_reload: yes
   tags: le_replica_receive
 
-- name: ensure directory for log file
+- name: create directory for log file
   file:
     path: /var/log/letsencrypt
     state: directory
     owner: root
     mode: 0700
+  tags: le_replica_receive
+
+- name: create directory for hooks
+  file:
+    path: /etc/letsencrypt/renewal-hooks/{{ item }}
+    state: directory
+    owner: root
+    mode: 0755
+  loop:
+    - pre
+    - post
+    - deploy
   tags: le_replica_receive
 
 - name: create post-receive handler script
