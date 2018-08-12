@@ -1,0 +1,10 @@
+[Unit]
+Description=Certbot attempt push to replica (ansible managed)
+
+[Timer]
+OnCalendar=*-*-* *:00/{{ certbot_push_attempt_interval_minutes }}
+RandomizedDelaySec=30
+Persistent=true
+
+[Install]
+WantedBy=timers.target

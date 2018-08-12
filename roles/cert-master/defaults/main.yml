@@ -1,4 +1,9 @@
 ---
 # defaults file for ivansible.letsencrypt-master
 
+certbot_master_replica_hosts: []
+
+certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
+
+certbot_push_attempt_interval_minutes: 15
 ...

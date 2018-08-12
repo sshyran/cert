@@ -1,5 +1,97 @@
 ---
-- name: ROLENAME root action 1
-  debug:
-    msg: action 1
+- name: install certbot and rsync packages
+  apt:
+    name:
+      - certbot
+      - rsync
+    state: present
+  tags: le_master_install
+
+
+- name: configure ssh keys and aliases foor root user access to replicas
+  import_tasks: ssh.yml
+  tags: le_master_ssh
+
+
+- name: create replica pushing script
+  template:
+    src: certbot-push-replica.sh
+    dest: /usr/local/sbin/certbot-push-replica.sh
+    owner: root
+    mode: 0700
+  notify: fire first certbot push
+  tags: le_master_service
+
+- name: create replica pushing service
+  template:
+    src: certbot-push.service
+    dest: /etc/systemd/system/certbot-push@.service
+  notify: fire first certbot push
+  tags: le_master_service
+
+- name: create replica pushing timer
+  template:
+    src: certbot-push.timer
+    dest: /etc/systemd/system/certbot-push@.timer
+  notify: fire first certbot push
+  tags: le_master_service
+
+- name: enable but stop pushing timers for all replicas
+  systemd:
+    name: certbot-push@{{ item }}.timer
+    state: stopped
+    enabled: yes
+    daemon_reload: yes
+  loop: "{{ certbot_master_replica_hosts }}"
+  tags: le_master_service
+
+- name: create global pushing script
+  copy:
+    content: |
+      #!/bin/bash
+      echo "$(date): start pushing to all replicas" >> /var/log/letsencrypt/letsencrypt.log
+      {% for host in certbot_master_replica_hosts %}
+      systemctl start certbot-push@{{ host }}.timer
+      {% endfor %}
+    dest: /etc/letsencrypt/renewal-hooks/post/push
+    owner: root
+    mode: 0750
+  notify: fire first certbot push
+  tags: le_master_service
+
+
+- name: list all present certbot-push units
+  shell: systemctl list-units
+                   --all --no-pager
+                   certbot-push@*
+                   2>&1 |
+      grep certbot-push |
+      awk '{print $1}' |
+      cut -d@ -f2 |
+      cut -d. -f1 |
+      sort -u
+  register: all_push_units
+  changed_when: false
+  ignore_errors: yes
+  tags: le_master_cleanup
+
+- name: remove extra certbot-push service units
+  systemd:
+    name: certbot-push@{{ item }}.timer
+    state: stopped
+    enabled: yes
+    daemon_reload: yes
+  loop: "{{ all_push_units.stdout_lines
+          | difference(certbot_master_replica_hosts) }}"
+  tags: le_master_cleanup
+
+- name: remove extra certbot-push timer units
+  systemd:
+    name: certbot-push@{{ item }}.timer
+    state: stopped
+    enabled: yes
+    daemon_reload: yes
+  loop: "{{ all_push_units.stdout_lines
+          | difference(certbot_master_replica_hosts) }}"
+  tags: le_master_cleanup
 ...

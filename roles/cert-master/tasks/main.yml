@@ -7,4 +7,6 @@
 - name: become root
   import_tasks: root.yml
   become: yes
+
+- meta: flush_handlers
 ...
