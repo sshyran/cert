@@ -2,13 +2,13 @@
 - name: install certbot and rsync packages
   apt:
     name:
-      - certbot
+      - certbot  # just for case
       - rsync
     state: present
   tags: le_master_install
 
 
-- name: configure ssh keys and aliases foor root user access to replicas
+- name: configure ssh keys and aliases for root user to access replicas
   import_tasks: ssh.yml
   tags: le_master_ssh
 
@@ -36,7 +36,7 @@
   notify: fire first certbot push
   tags: le_master_service
 
-- name: enable but stop pushing timers for all replicas
+- name: enable pushing timers for all replicas (yet inactive)
   systemd:
     name: certbot-push@{{ item }}.timer
     state: stopped

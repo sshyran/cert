@@ -4,7 +4,7 @@ dependencies: []
 galaxy_info:
   role_name: letsencrypt-master
   author: "Ivan Andreev"
-  description: "setup certbot master"
+  description: "configure certbot master to propagate renewed letsencrypt certificates to replicas"
   company: "IvanSible"
   license: MIT
   min_ansible_version: 2.5
