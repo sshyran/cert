@@ -4,4 +4,6 @@
 certbot_replica_user: "{{ ansible_user_id }}"
 
 certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
+
+certbot_group: certbot-data
 ...

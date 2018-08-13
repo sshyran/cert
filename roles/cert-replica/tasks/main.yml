@@ -16,6 +16,7 @@
   delegate_to: "{{ certbot_master_host }}"
   run_once: yes
   when: certbot_master_host is defined
+  tags: le_replica_master
 
 - meta: flush_handlers
 ...

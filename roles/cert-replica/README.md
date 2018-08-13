@@ -1,5 +1,6 @@
 # ivansible.letsencrypt-replica
-This role configures a host for receiving letsencrypt certificates from certbot master host.
+This role configures a host for receiving new letsencrypt certificates
+from certbot master host.
 
 
 ## Requirements
@@ -17,6 +18,17 @@ Certbot master will access replica via rsync/ssh using this user
     certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
 Keys for ssh access from the certbot master host.
 
+    certbot_master_host: None
+When defined, this must be inventory hostname of the master host
+for currently running `ansible_play_hosts` list of replicas.
+The role `ivansible.letsencrypt-master` will be run on this host
+with current play hosts in parameter `certbot_master_replica_hosts`.
+
+    certbot_group: certbot-data
+Members of this unix group will have read access to certificates.
+This group must be the same on master and replica hosts.
+
+
 ## Tags
 
 - `le_replica_install` -- install certbot and rsync packages
@@ -25,11 +37,21 @@ Keys for ssh access from the certbot master host.
 - `le_replica_ssh` -- authorize ssh keys with pull user
 - `le_replica_receive` -- disable certbot certificate renewal service
 - `le_replica_receive` -- create post-receive handler script
+- `le_replica_master` -- configure master host in a separate role
 
 
 ## Dependencies
 
-None
+This role will invoke role `ivansible.letsencrypt-master`
+on the master host if appropriate parameter is set.
+This will be performed once (`run_once`) for all replica hosts.
+
+We could probably avoid this dependency and list master actions
+in a separate play in the containing playbook, additionally allowing
+for multiple master hosts. However, _letsencrypt-master_ and _replica_
+roles are so tightly coupled that we go for this dependency.
+Moreover, with letsencrypt/cloudflare there can be only one node
+requesting certificates.
 
 
 ## Example Playbook
