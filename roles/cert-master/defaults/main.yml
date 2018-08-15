@@ -6,4 +6,8 @@ certbot_master_replica_hosts: []
 certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
 
 certbot_push_attempt_interval_minutes: 15
+
+# the following settings must match the letsencrypt_replica role
+certbot_replica_handler: /usr/local/sbin/certbot-post-receive.sh
+certbot_replica_tempdir: .letsencrypt.tmp
 ...

@@ -1,18 +1,19 @@
 #!/bin/bash
 NAME=$1
 LOG=/var/log/letsencrypt/letsencrypt.log
+LETEMP={{ certbot_replica_tempdir }}
 
 [ -n "$NAME" ] || exit 1
 echo "$(date): start pushing to $NAME" >> $LOG
 
 SUCCESS=$(
     (
-        rsync -az --delete \
+        rsync -z -a --delete \
               /etc/letsencrypt/ \
-              $NAME.certbot-replica:.letsencrypt.tmp/ &&
+              $NAME.certbot-replica:$LETEMP/ &&
 
         ssh $NAME.certbot-replica \
-            sudo /usr/local/sbin/certbot-post-receive.sh
+            sudo {{ certbot_replica_handler }}
     ) 2>&1 \
     | tee -a $LOG \
     | tail -2 | grep "pushed successfully" \
