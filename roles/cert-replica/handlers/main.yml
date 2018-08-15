@@ -5,4 +5,9 @@
   command: certbot
   failed_when: false
   become: yes
+
+- name: run receive handler once to fix file/directory permissions
+  command: "{{ certbot_replica_handler }}"
+  become: yes
+  ignore_errors: yes
 ...

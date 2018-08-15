@@ -16,8 +16,11 @@
       - certbot      # creates /etc/letsecnrypt
       - rsync        # rsync client
       - python3-pip  # just in case
+      - ssl-cert     # for ssl-cert unix group
     install_recommends: no
-  notify: run certbot once to create directory structure in /etc
+  notify:
+    - run certbot once to create directory structure in /etc
+    - run receive handler once to fix file/directory permissions
   tags: le_replica_install
 
 
@@ -25,6 +28,8 @@
   group:
     name: "{{ certbot_group }}"
     state: present
+  notify:
+    - run receive handler once to fix file/directory permissions
   tags: le_replica_group
 
 - name: grant certbot group access to letsencrypt files
@@ -37,6 +42,8 @@
   loop:
     - archive
     - live
+  notify:
+    - run receive handler once to fix file/directory permissions
   tags: le_replica_group
 
 
@@ -80,8 +87,10 @@
 - name: create post-receive handler script
   template:
     src: certbot-post-receive.sh
-    dest: /usr/local/sbin/certbot-post-receive.sh
+    dest: "{{ certbot_replica_handler }}"
     owner: root
     mode: 0700
+  notify:
+    - run receive handler once to fix file/directory permissions
   tags: le_replica_receive
 ...

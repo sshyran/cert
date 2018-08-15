@@ -2,6 +2,12 @@
 This role configures a host for receiving new letsencrypt certificates
 from certbot master host.
 
+Certbot creates certificates and private keys with permissions 0644.
+It rather prevents world access on the directory level.
+Some software e.g. Postgresql server requires that private keys are not world-readable.
+This role takes care of asigning appropriate group to private keys
+and sets their mode to 0640. This is done by the post-receive hook script.
+
 
 ## Requirements
 
@@ -21,10 +27,10 @@ Keys for ssh access from the certbot master host.
     certbot_master_host: None
 When defined, this must be inventory hostname of the master host
 for currently running `ansible_play_hosts` list of replicas.
-The role `ivansible.letsencrypt-master` will be run on this host
+The role `ivansible.letsencrypt_master` will be run on this host
 with current play hosts in parameter `certbot_master_replica_hosts`.
 
-    certbot_group: certbot-data
+    certbot_group: ssl-cert
 Members of this unix group will have read access to certificates.
 This group must be the same on master and replica hosts.
 
