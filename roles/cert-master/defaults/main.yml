@@ -1,5 +1,5 @@
 ---
-# defaults file for ivansible.letsencrypt-master
+# defaults file for ivansible.letsencrypt_master
 
 certbot_master_replica_hosts: []
 

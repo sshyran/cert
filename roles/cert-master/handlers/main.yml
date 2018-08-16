@@ -1,5 +1,5 @@
 ---
-# handlers file for ivansible.letsencrypt-master
+# handlers file for ivansible.letsencrypt_master
 
 - name: fire first certbot push
   command: /etc/letsencrypt/renewal-hooks/post/push

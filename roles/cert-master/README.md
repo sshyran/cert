@@ -1,4 +1,5 @@
-# ivansible.letsencrypt-master
+# ivansible.letsencrypt_master
+
 This role configures a dedicated host, which is requesting
 certificates from letsencrypt, to automatically propagate them to a number
 of replica hosts. This design allows for higher security: critical
@@ -40,10 +41,10 @@ Must be the same on master and replica hosts.
 
 ## Dependencies
 
-This role requires that `ivansible.letsencrypt-cloudflare` is already
+This role requires that `ivansible.letsencrypt_cloudflare` is already
 installed on the host. However, since other letsencrypt challenges
 may be used, there is no ansible dependency. On the other hand, since
-`ivansible.letsencrypt-master` and `ivansible.letsencrypt-slave` roles
+`ivansible.letsencrypt_master` and `ivansible.letsencrypt_replica` roles
 are so tightly coupled, the master role is not invoked from playbooks
 directly, but rather imported by the slave role.
 
@@ -72,10 +73,10 @@ an attempt succesful only when it sees this message.
 
     - hosts: master-host
       roles:
-         - role: ivansible.letsencrypt-master
+         - role: ivansible.letsencrypt_master
            certbot_master_replica_hosts:
-             - slave1
-             - slave2
+             - slave-host1
+             - slave-host2
             certbot_push_attempt_interval_minutes: 30
 
 
