@@ -2,7 +2,7 @@
 dependencies: []
 
 galaxy_info:
-  role_name: letsencrypt-replica
+  role_name: letsencrypt_replica
   author: "Ivan Andreev"
   description: "configure certbot replica to receive new letsencrypt certificates from master"
   company: "IvanSible"

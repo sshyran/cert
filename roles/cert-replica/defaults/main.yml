@@ -1,5 +1,5 @@
 ---
-# defaults file for ivansible.letsencrypt-replica
+# defaults file for ivansible.letsencrypt_replica
 
 certbot_replica_user: "{{ ansible_user_id }}"
 

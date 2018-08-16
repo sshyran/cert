@@ -1,4 +1,5 @@
-# ivansible.letsencrypt-replica
+# ivansible.letsencrypt_replica
+
 This role configures a host for receiving new letsencrypt certificates
 from certbot master host.
 
@@ -48,13 +49,13 @@ This group must be the same on master and replica hosts.
 
 ## Dependencies
 
-This role will invoke role `ivansible.letsencrypt-master`
+This role will invoke role `ivansible.letsencrypt_master`
 on the master host if appropriate parameter is set.
 This will be performed once (`run_once`) for all replica hosts.
 
 We could probably avoid this dependency and list master actions
 in a separate play in the containing playbook, additionally allowing
-for multiple master hosts. However, _letsencrypt-master_ and _replica_
+for multiple master hosts. However, _letsencrypt_master_ and _replica_
 roles are so tightly coupled that we go for this dependency.
 Moreover, with letsencrypt/cloudflare there can be only one node
 requesting certificates.
@@ -64,7 +65,7 @@ requesting certificates.
 
     - hosts: vagrant-boxes
       roles:
-         - role: ivansible.letsencrypt-replica
+         - role: ivansible.letsencrypt_replica
 
 
 ## License

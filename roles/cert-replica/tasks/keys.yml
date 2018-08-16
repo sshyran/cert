@@ -1,5 +1,5 @@
 ---
-# steps taken from role ivansible.lin-enter task keys.yml
+# steps taken from role ivansible.lin_enter task keys.yml
 
 - name: fix local key files permissions for ssh-keygen
   file:

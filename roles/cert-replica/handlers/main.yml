@@ -1,5 +1,5 @@
 ---
-# handlers file for ivansible.letsencrypt-replica
+# handlers file for ivansible.letsencrypt_replica
 
 - name: run certbot once to create directory structure in /etc
   command: certbot

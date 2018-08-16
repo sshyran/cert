@@ -1,5 +1,5 @@
 ---
-# steps taken from role ivansible.lin-enter task tune.yml
+# steps taken from role ivansible.lin_enter task tune.yml
 
 - name: remove requiretty from sudoers
   lineinfile:
