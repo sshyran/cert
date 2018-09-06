@@ -1,7 +1,8 @@
 # ivansible.letsencrypt_replica
 
 This role configures a host for receiving new letsencrypt certificates
-from certbot master host.
+from certbot master host. Please refer to `letsencrypt_master`
+[implementation details](https://github.com/ivansible/letsencrypt-master#implementation-details).
 
 Certbot creates certificates and private keys with permissions 0644.
 It rather prevents world access on the directory level.
