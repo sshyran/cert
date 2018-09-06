@@ -58,9 +58,11 @@ This script starts a number of timers that periodically invoke push script
 This script performs another push attempt and stops its own timer when
 the attempt is succesful. Every attempt runs `rsync` to synchronize
 `archive` and `live` letsencrypt directories with renewed certificates
-to a temporary non-root location on the corresponding replica machine,
-then uses `ssh` to invoke a post-receive script on the replica machine
-(`/usr/local/sbin/certbot-post-receive.sh`). This script is run as root.
+to a temporary non-root location on the corresponding
+[replica machine](https://github.com/ivansible/letsencrypt-replica#ivansibleletsencrypt_replica).
+
+After that master uses `ssh` to invoke a post-receive script on the
+replica machine (`/usr/local/sbin/certbot-post-receive.sh`) under root user.
 It moves received data to the final location in `/etc/letsencrypt`, fixes
 access permissions and runs local replica letsencrypt hook scripts from
 `/etc/letsencrypt/renewal-hooks`. As checking remote return code via ssh
