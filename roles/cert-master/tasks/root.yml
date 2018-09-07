@@ -43,6 +43,7 @@
     enabled: yes
     daemon_reload: yes
   loop: "{{ certbot_master_replica_hosts }}"
+  notify: fire first certbot push
   tags: le_master_service
 
 - name: create global pushing script
@@ -62,36 +63,26 @@
 
 - name: list all present certbot-push units
   shell: systemctl list-units
-                   --all --no-pager
+                   --no-pager --no-legend
+                   --all --type=service,timer
                    certbot-push@*
                    2>&1 |
-      grep certbot-push |
-      awk '{print $1}' |
-      cut -d@ -f2 |
-      cut -d. -f1 |
-      sort -u
-  register: all_push_units
+        tr '@.' ',' | cut -d, -f2 | sort -u
+  register: all_push_replicas
   changed_when: false
   ignore_errors: yes
   tags: le_master_cleanup
 
-- name: remove extra certbot-push service units
+- name: remove extra certbot-push timers and services
   systemd:
-    name: certbot-push@{{ item }}.timer
+    name: certbot-push@{{ item.0 }}.{{ item.1 }}
     state: stopped
-    enabled: yes
+    enabled: no
     daemon_reload: yes
-  loop: "{{ all_push_units.stdout_lines
-          | difference(certbot_master_replica_hosts) }}"
-  tags: le_master_cleanup
-
-- name: remove extra certbot-push timer units
-  systemd:
-    name: certbot-push@{{ item }}.timer
-    state: stopped
-    enabled: yes
-    daemon_reload: yes
-  loop: "{{ all_push_units.stdout_lines
-          | difference(certbot_master_replica_hosts) }}"
+  ignore_errors: yes
+  loop: "{{ all_push_replicas.stdout_lines
+          | difference(certbot_master_replica_hosts)
+          | product(['timer', 'service'])
+          | list }}"
   tags: le_master_cleanup
 ...
