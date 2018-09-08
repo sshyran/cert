@@ -62,12 +62,13 @@
 
 
 - name: list all present certbot-push units
-  shell: systemctl list-units
-                   --no-pager --no-legend
-                   --all --type=service,timer
-                   certbot-push@*
-                   2>&1 |
-        tr '@.' ',' | cut -d, -f2 | sort -u
+  shell:
+    systemctl list-units
+              --no-pager --no-legend
+              --all --type=service,timer
+              certbot-push@*
+              2>&1 |
+    tr '@.' ',' | cut -d, -f2 | sort -u
   register: all_push_replicas
   changed_when: false
   ignore_errors: yes
