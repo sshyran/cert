@@ -3,7 +3,7 @@
 
 certbot_replica_user: "{{ ansible_user_id }}"
 
-certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
+certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 
 certbot_replica_handler: /usr/local/sbin/certbot-post-receive.sh
 certbot_replica_tempdir: .letsencrypt.tmp

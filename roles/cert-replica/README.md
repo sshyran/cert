@@ -23,7 +23,7 @@ Available variables are listed below, along with default values.
     certbot_replica_user: "{{ ansible_user_id }}"
 Certbot master will access replica via rsync/ssh using this user
 
-    certbot_replica_ssh_keys: "{{ query('fileglob', 'files/secret/vanko-*.key') }}"
+    certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 Keys for ssh access from the certbot master host.
 
     certbot_master_host: None
@@ -60,6 +60,8 @@ for multiple master hosts. However, _letsencrypt_master_ and _replica_
 roles are so tightly coupled that we go for this dependency.
 Moreover, with letsencrypt/cloudflare there can be only one node
 requesting certificates.
+
+Also depends on `ivansible.lin_base` for `lin_ssh_keys_files`.
 
 
 ## Example Playbook
