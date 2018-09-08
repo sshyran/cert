@@ -48,6 +48,8 @@ may be used, there is no ansible dependency. On the other hand, since
 are so tightly coupled, the master role is not invoked from playbooks
 directly, but rather imported by the slave role.
 
+Also depends on `ivansible.lin_base` for `lin_ssh_keys_files`.
+
 
 ## Implementation details
 
