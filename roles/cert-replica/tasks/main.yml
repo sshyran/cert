@@ -10,7 +10,7 @@
 
 - name: setup certbot master
   import_role:
-    name: ivansible.letsencrypt_master
+    name: ivansible.cert_master
   vars:
     certbot_master_replica_hosts: "{{ ansible_play_hosts }}"
   delegate_to: "{{ certbot_master_host }}"

@@ -1,13 +1,13 @@
 ---
-# defaults file for ivansible.letsencrypt_replica
+# defaults file for ivansible.cert_replica
 
 certbot_replica_user: "{{ ansible_user_id }}"
 
 certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 
 certbot_replica_handler: /usr/local/sbin/certbot-post-receive.sh
-certbot_replica_tempdir: .letsencrypt.tmp
+certbot_replica_tempdir: .certbot.tmp
 
-# the following setting must match the letsencrypt_master and letsencrypt_cloudflare roles
+# the following setting must match the cert_master and cert_cloudflare roles
 certbot_group: ssl-cert
 ...

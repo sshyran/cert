@@ -1,8 +1,8 @@
-# ivansible.letsencrypt_replica
+# ivansible.cert_replica
 
 This role configures a host for receiving new letsencrypt certificates
-from certbot master host. Please refer to `letsencrypt_master`
-[implementation details](https://github.com/ivansible/letsencrypt-master#implementation-details).
+from certbot master host. Please refer to `cert_master`
+[implementation details](https://github.com/ivansible/cert-master#implementation-details).
 
 Certbot creates certificates and private keys with permissions 0644.
 It rather prevents world access on the directory level.
@@ -29,7 +29,7 @@ Keys for ssh access from the certbot master host.
     certbot_master_host: None
 When defined, this must be inventory hostname of the master host
 for currently running `ansible_play_hosts` list of replicas.
-The role `ivansible.letsencrypt_master` will be run on this host
+The role `ivansible.cert_master` will be run on this host
 with current play hosts in parameter `certbot_master_replica_hosts`.
 
     certbot_group: ssl-cert
@@ -50,13 +50,13 @@ This group must be the same on master and replica hosts.
 
 ## Dependencies
 
-This role will invoke role `ivansible.letsencrypt_master`
+This role will invoke role `ivansible.cert_master`
 on the master host if appropriate parameter is set.
 This will be performed once (`run_once`) for all replica hosts.
 
 We could probably avoid this dependency and list master actions
 in a separate play in the containing playbook, additionally allowing
-for multiple master hosts. However, _letsencrypt_master_ and _replica_
+for multiple master hosts. However, _cert_master_ and _replica_
 roles are so tightly coupled that we go for this dependency.
 Moreover, with letsencrypt/cloudflare there can be only one node
 requesting certificates.
@@ -68,7 +68,7 @@ Also depends on `ivansible.lin_base` for `lin_ssh_keys_files`.
 
     - hosts: vagrant-boxes
       roles:
-         - role: ivansible.letsencrypt_replica
+         - role: ivansible.cert_replica
 
 
 ## License
