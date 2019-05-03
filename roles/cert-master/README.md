@@ -1,4 +1,4 @@
-# ivansible.letsencrypt_master
+# ivansible.cert_master
 
 This role configures a dedicated host, which is requesting
 certificates from letsencrypt, to automatically propagate them to a number
@@ -41,10 +41,10 @@ Must be the same on master and replica hosts.
 
 ## Dependencies
 
-This role requires that `ivansible.letsencrypt_cloudflare` is already
+This role requires that `ivansible.cert_cloudflare` is already
 installed on the host. However, since other letsencrypt challenges
 may be used, there is no ansible dependency. On the other hand, since
-`ivansible.letsencrypt_master` and `ivansible.letsencrypt_replica` roles
+`ivansible.cert_master` and `ivansible.cert_replica` roles
 are so tightly coupled, the master role is not invoked from playbooks
 directly, but rather imported by the slave role.
 
@@ -61,10 +61,10 @@ This script performs another push attempt and stops its own timer when
 the attempt is succesful. Every attempt runs `rsync` to synchronize
 `archive` and `live` letsencrypt directories with renewed certificates
 to a temporary non-root location on the corresponding
-[replica machine](https://github.com/ivansible/letsencrypt-replica#ivansibleletsencrypt_replica).
+[replica machine](https://github.com/ivansible/cert-replica#ivansiblecert_replica).
 
-After that master uses `ssh` to invoke a post-receive script on the
-replica machine (`/usr/local/sbin/certbot-post-receive.sh`) under root user.
+Then master uses `ssh` to invoke a post-receive script on the replica machine
+(`/usr/local/sbin/certbot-post-receive.sh`) under root user.
 It moves received data to the final location in `/etc/letsencrypt`, fixes
 access permissions and runs local replica letsencrypt hook scripts from
 `/etc/letsencrypt/renewal-hooks`. As checking remote return code via ssh
@@ -77,7 +77,7 @@ an attempt succesful only when it sees this message.
 
     - hosts: master-host
       roles:
-         - role: ivansible.letsencrypt_master
+         - role: ivansible.cert_master
            certbot_master_replica_hosts:
              - slave-host1
              - slave-host2

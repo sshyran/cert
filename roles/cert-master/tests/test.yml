@@ -2,5 +2,5 @@
 - hosts: localhost
   remote_user: username
   roles:
-    - ivansible.letsencrypt_master
+    - ivansible.cert_master
 ...
