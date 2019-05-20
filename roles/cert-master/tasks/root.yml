@@ -74,7 +74,7 @@
   ignore_errors: yes
   tags: le_master_cleanup
 
-- name: remove extra certbot-push timers and services
+- name: remove extra certbot-push timers and services (ok to fail)
   systemd:
     name: certbot-push@{{ item.0 }}.{{ item.1 }}
     state: stopped
