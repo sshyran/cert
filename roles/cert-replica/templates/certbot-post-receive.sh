@@ -8,7 +8,8 @@ echo "$(date): start post-push actions" >> $LOG
 # move temporary files to /etc/letsencrypt
 if [ -d ~{{ certbot_replica_user }}/$LETEMP ]
 then
-    echo "$(date): syncing $LETEMP"
+    MSG="syncing $LETEMP"
+    echo "$(date): $MSG"
     cd ~{{ certbot_replica_user }}
     chown -R root:root $LETEMP
     for subdir in archive live
@@ -19,7 +20,8 @@ then
     done
     rm -rf $LETEMP
 else
-    echo "$(date): missing $LETEMP"
+    MSG="missing $LETEMP"
+    echo "$(date): $MSG"
 fi >> $LOG 2>&1
 
 (
@@ -44,5 +46,4 @@ do
 done  >> $LOG 2>&1
 
 # final message
-echo "$(date): pushed successfully" >> $LOG
-echo "pushed successfully"
+echo "$(date): pushed successfully (slave $MSG)" | tee -a $LOG
