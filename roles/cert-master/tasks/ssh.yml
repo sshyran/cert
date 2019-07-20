@@ -37,7 +37,9 @@
         StrictHostKeyChecking no
         UserKnownHostsFile /dev/null
         LogLevel ERROR
+
       {% endfor %}
     marker: "# == {mark} certbot replicas =="
-    insertafter: "^#\\."
+    # insert before any "glob overriding" entry
+    insertbefore: "^Host .*[*]"
 ...
