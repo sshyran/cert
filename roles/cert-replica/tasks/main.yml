@@ -7,6 +7,7 @@
 - name: become root
   import_tasks: root.yml
   become: yes
+  tags: le_replica_all
 
 - name: setup certbot master
   import_role:
