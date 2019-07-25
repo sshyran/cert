@@ -14,5 +14,6 @@
   when: certbot_master_host is defined
   tags: le_replica_master
 
-- meta: flush_handlers
+- name: run postponed handlers now
+  include_tasks: flush-handlers.yml
 ...
