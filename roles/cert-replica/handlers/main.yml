@@ -10,4 +10,5 @@
   command: "{{ certbot_replica_handler }}"
   become: yes
   ignore_errors: yes
+  no_log: true
 ...
