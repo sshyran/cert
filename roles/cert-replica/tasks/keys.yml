@@ -15,7 +15,7 @@
   authorized_key:
     user: "{{ certbot_replica_user }}"
     key: "{{ lookup('pipe', 'ssh-keygen -y -f \"{{ item }}\"') }}"
-    comment: "{{ item | basename }}"
+    comment: "{{ item | basename | regex_replace('[.]key$') }}"
     state: present
   loop: "{{ certbot_replica_ssh_keys }}"
   loop_control:
