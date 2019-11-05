@@ -1,0 +1,6 @@
+---
+# flush_handlers is an included task to avoid the below warning:
+# "flush_handlers task does not support when conditional"
+- name: flush postponed handlers now
+  meta: flush_handlers
+...

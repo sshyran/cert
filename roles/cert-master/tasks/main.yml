@@ -3,5 +3,6 @@
   import_tasks: root.yml
   become: true
 
-- meta: flush_handlers
+- name: run postponed handlers now
+  include_tasks: flush-handlers.yml
 ...
