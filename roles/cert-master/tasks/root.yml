@@ -62,6 +62,7 @@
 
 
 - name: list all present certbot-push units
+  # noqa 303 - systemd module won't handle this task
   shell:
     systemctl list-units
               --no-pager --no-legend
