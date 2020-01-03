@@ -1,11 +1,11 @@
 ---
 dependencies:
-  - ivansible.lin_base  # for lin_ssh_keys_files
+  - ivansible.lin_base  # for lin_ssh_keys_files et cetera.
 
 galaxy_info:
   role_name: cert_master
   author: "Ivan Andreev"
-  description: "configure certbot master to propagate renewed letsencrypt certificates to replicas"
+  description: "set certbot master to propagate renewed certificates to replicas"
   company: "IvanSible"
   license: MIT
   min_ansible_version: 2.5

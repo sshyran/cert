@@ -5,12 +5,12 @@
       - certbot  # just for case
       - rsync
     state: present
-  tags: le_master_install
+  tags: cert_master_install
 
 
 - name: configure ssh keys and aliases for root user to access replicas
   import_tasks: ssh.yml
-  tags: le_master_ssh
+  tags: cert_master_ssh
 
 
 - name: create replica pushing script
@@ -20,49 +20,73 @@
     owner: root
     mode: 0700
   notify: fire first certbot push
-  tags: le_master_service
+  tags: cert_master_service
 
 - name: create replica pushing service
-  template:
-    src: certbot-push.service
+  copy:
     dest: /etc/systemd/system/certbot-push@.service
+    content: |
+      # ansible-managed
+      [Unit]
+      Description=Certbot push to replica (ansible managed)
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/sbin/certbot-push-replica.sh %i
+    force: true
   notify: fire first certbot push
-  tags: le_master_service
+  tags: cert_master_service
+
 
 - name: create replica pushing timer
-  template:
-    src: certbot-push.timer
+  copy:
     dest: /etc/systemd/system/certbot-push@.timer
+    content: |
+      # ansible-managed
+      [Unit]
+      Description=Certbot attempt push to replica (ansible managed)
+
+      [Timer]
+      OnCalendar=*-*-* *:00/{{ certbot_push_attempt_interval_minutes }}
+      RandomizedDelaySec=30
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+    force: true
   notify: fire first certbot push
-  tags: le_master_service
+  tags: cert_master_service
 
 - name: enable pushing timers for all replicas (yet inactive)
   systemd:
     name: certbot-push@{{ item }}.timer
     state: stopped
-    enabled: yes
-    daemon_reload: yes
+    enabled: true
+    daemon_reload: true
   loop: "{{ certbot_master_replica_hosts }}"
   notify: fire first certbot push
-  tags: le_master_service
+  tags: cert_master_service
+
 
 - name: create global pushing script
   copy:
+    dest: /etc/letsencrypt/renewal-hooks/post/push
     content: |
       #!/bin/bash
+      # ansible-managed
       echo "$(date): start pushing to all replicas" >> /var/log/letsencrypt/letsencrypt.log
       {% for host in certbot_master_replica_hosts %}
       systemctl start certbot-push@{{ host }}.timer
       {% endfor %}
-    dest: /etc/letsencrypt/renewal-hooks/post/push
+    force: true
     owner: root
     mode: 0750
   notify: fire first certbot push
-  tags: le_master_service
+  tags: cert_master_service
 
 
 - name: list all present certbot-push units
-  # noqa 303 - systemd module won't handle this task
+  # noqa 303 - systemd module can't handle this task
   shell:
     systemctl list-units
               --no-pager --no-legend
@@ -72,19 +96,19 @@
     tr '@.' ',' | cut -d, -f2 | sort -u
   register: all_push_replicas
   changed_when: false
-  ignore_errors: yes
-  tags: le_master_cleanup
+  ignore_errors: true
+  tags: cert_master_cleanup
 
 - name: remove extra certbot-push timers and services (ok to fail)
   systemd:
     name: certbot-push@{{ item.0 }}.{{ item.1 }}
     state: stopped
-    enabled: no
-    daemon_reload: yes
-  ignore_errors: yes
+    enabled: false
+    daemon_reload: true
+  ignore_errors: true
   loop: "{{ all_push_replicas.stdout_lines
           | difference(certbot_master_replica_hosts)
           | product(['timer', 'service'])
           | list }}"
-  tags: le_master_cleanup
+  tags: cert_master_cleanup
 ...

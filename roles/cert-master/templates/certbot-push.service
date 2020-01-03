@@ -1,5 +1,0 @@
-[Unit]
-Description=Certbot push to replica (ansible managed)
-[Service]
-Type=oneshot
-ExecStart=/usr/local/sbin/certbot-push-replica.sh %i

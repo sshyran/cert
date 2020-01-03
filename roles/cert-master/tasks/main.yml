@@ -2,7 +2,9 @@
 - name: use import to become root globally
   import_tasks: root.yml
   become: true
+  tags: cert_master_all
 
 - name: run postponed handlers now
   include_tasks: flush-handlers.yml
+  tags: cert_master_all
 ...

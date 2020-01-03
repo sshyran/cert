@@ -1,5 +1,5 @@
 ---
-# defaults file for ivansible.cert_master
+# defaults for ivansible.cert_master
 
 certbot_master_replica_hosts: []
 

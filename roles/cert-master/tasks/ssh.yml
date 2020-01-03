@@ -23,7 +23,7 @@
 - name: configure ssh aliases for certbot replica hosts
   blockinfile:
     path: ~/.ssh/config
-    create: yes
+    create: true
     mode: 0600
     block: |
       {% for host in certbot_master_replica_hosts %}

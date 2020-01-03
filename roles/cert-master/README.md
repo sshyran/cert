@@ -31,12 +31,13 @@ Must be the same on master and replica hosts.
 
 ## Tags
 
-- `le_master_install` -- install certbot and rsync packages
-- `le_master_ssh` -- configure ssh keys and aliases
-                     for root user to access replicas
-- `le_master_service` -- create replica pushing script,
-                         global pushing script, services and timers
-- `le_master_cleanup` -- remove stale certbot-push service and timer units
+- `cert_master_install` -- install certbot and rsync packages
+- `cert_master_ssh` -- configure ssh keys and aliases
+                       for root user to access replicas
+- `cert_master_service` -- create replica pushing script,
+                           global pushing script, services and timers
+- `cert_master_cleanup` -- remove stale certbot-push service and timer units
+- `cert_master_all` -- all tasks
 
 
 ## Dependencies
@@ -90,4 +91,4 @@ MIT
 
 ## Author Information
 
-Created in 2018 by [IvanSible](https://github.com/ivansible)
+Created in 2018-2020 by [IvanSible](https://github.com/ivansible)
