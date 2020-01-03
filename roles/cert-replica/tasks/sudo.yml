@@ -6,7 +6,7 @@
     path: /etc/sudoers
     regexp: '^(Defaults\s+requiretty.*)'
     state: absent
-    backup: yes
+    backup: true
 
 - name: enable password-less sudo for pull user
   copy:

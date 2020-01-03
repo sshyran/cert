@@ -1,5 +1,5 @@
 ---
-# defaults file for ivansible.cert_replica
+# defaults for ivansible.cert_replica
 
 certbot_replica_user: "{{ ansible_user_id }}"
 

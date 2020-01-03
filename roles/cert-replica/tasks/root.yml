@@ -7,8 +7,9 @@
     # and fails. as a workaround, set codename here explicitly.
     codename: "{{ ansible_lsb.codename }}"
     filename: certbot
-    update_cache: yes
-  tags: le_replica_install
+    mode: 0644
+    update_cache: true
+  tags: cert_replica_install
 
 - name: install certbot and rsync packages
   apt:
@@ -17,11 +18,12 @@
       - rsync        # rsync client
       - python3-pip  # just in case
       - ssl-cert     # for ssl-cert unix group
-    install_recommends: no
+    state: present
+    install_recommends: false
   notify:
     - run certbot once to create directory structure in /etc
     - run receive handler once to fix file/directory permissions
-  tags: le_replica_install
+  tags: cert_replica_install
 
 
 - name: create unix group for letsencrypt certificate access
@@ -30,7 +32,7 @@
     state: present
   notify:
     - run receive handler once to fix file/directory permissions
-  tags: le_replica_group
+  tags: cert_replica_group
 
 - name: grant certbot group access to letsencrypt files
   file:
@@ -44,25 +46,25 @@
     - live
   notify:
     - run receive handler once to fix file/directory permissions
-  tags: le_replica_group
+  tags: cert_replica_group
 
 
 - name: configure sudoers
   import_tasks: sudo.yml
-  tags: le_replica_sudo
+  tags: cert_replica_sudo
 
 - name: authorize ssh keys with pull user
   import_tasks: keys.yml
-  tags: le_replica_ssh
+  tags: cert_replica_ssh
 
 
 - name: disable certbot certificate renewal service
   systemd:
     name: certbot.timer
     state: stopped
-    enabled: no
-    daemon_reload: yes
-  tags: le_replica_receive
+    enabled: false
+    daemon_reload: true
+  tags: cert_replica_receive
 
 - name: create directory for log file
   file:
@@ -70,7 +72,7 @@
     state: directory
     owner: root
     mode: 0700
-  tags: le_replica_receive
+  tags: cert_replica_receive
 
 - name: create directory for hooks
   file:
@@ -82,7 +84,7 @@
     - pre
     - post
     - deploy
-  tags: le_replica_receive
+  tags: cert_replica_receive
 
 - name: create post-receive handler script
   template:
@@ -92,5 +94,5 @@
     mode: 0700
   notify:
     - run receive handler once to fix file/directory permissions
-  tags: le_replica_receive
+  tags: cert_replica_receive
 ...

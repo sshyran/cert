@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - ivansible.lin_base  # for lin_ssh_keys_files
+  - ivansible.lin_base  # for lin_ssh_keys_files, hide_secrets and other defaults
 
 galaxy_info:
   role_name: cert_replica

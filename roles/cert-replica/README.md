@@ -39,18 +39,21 @@ This group must be the same on master and replica hosts.
 
 ## Tags
 
-- `le_replica_install` -- install certbot and rsync packages
-- `le_replica_group` -- grant certbot group access to letsencrypt files
-- `le_replica_sudo` -- configure sudoers
-- `le_replica_ssh` -- authorize ssh keys with pull user
-- `le_replica_receive` -- disable certbot certificate renewal service
-- `le_replica_receive` -- create post-receive handler script
-- `le_replica_master` -- configure master host in a separate role
+- `cert_replica_install` -- install certbot and rsync packages
+- `cert_replica_group` -- grant certbot group access to letsencrypt files
+                          (deliberately overlaps with role
+                          [cert_cloudflare](https://github.com/ivansible/cert-cloudflare))
+- `cert_replica_sudo` -- configure sudoers
+- `cert_replica_ssh` -- authorize ssh keys with pull user
+- `cert_replica_receive` -- disable certbot certificate renewal service
+                            and create post-receive handler script
+- `cert_replica_master` -- configure master host in a separate role
+- `cert_replica_all` -- all tasks
 
 
 ## Dependencies
 
-This role will invoke role `ivansible.cert_master`
+This role will invoke sub-role [cert_master](https://github.com/ivansible/cert-master)
 on the master host if appropriate parameter is set.
 This will be performed once (`run_once`) for all replica hosts.
 
@@ -58,10 +61,10 @@ We could probably avoid this dependency and list master actions
 in a separate play in the containing playbook, additionally allowing
 for multiple master hosts. However, _cert_master_ and _replica_
 roles are so tightly coupled that we go for this dependency.
-Moreover, with letsencrypt/cloudflare there can be only one node
+Moreover, with `letsencrypt/cloudflare` there can be only one host node
 requesting certificates.
 
-Also depends on `ivansible.lin_base` for `lin_ssh_keys_files`.
+Also imports variable `lin_ssh_keys_files` from the role [lin_base](https://github.com/ivansible/lin-base).
 
 
 ## Example Playbook
@@ -77,4 +80,4 @@ MIT
 
 ## Author Information
 
-Created in 2018 by [IvanSible](https://github.com/ivansible)
+Created in 2018-2020 by [IvanSible](https://github.com/ivansible)
