@@ -18,7 +18,7 @@
         # deliberately not applying tag cert_replica_all
         # - cert_replica_all
   vars:
-    certbot_master_replica_hosts: "{{ ansible_play_hosts }}"
+    certbot_master_replica_hosts: "{{ ansible_play_hosts |sort }}"
   run_once: true
   when: certbot_master_host is defined
   tags:
