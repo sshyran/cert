@@ -4,6 +4,10 @@
   become: true
   tags: cert_replica_all
 
+- name: refresh host facts before delegating to master
+  setup:
+  when: certbot_master_host is defined
+
 - name: setup certbot master
   include_role:
     name: ivansible.cert_master
