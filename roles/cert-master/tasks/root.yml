@@ -19,6 +19,7 @@
     dest: /usr/local/sbin/certbot-push-replica.sh
     owner: root
     mode: 0700
+  register: replica_pushing_script
   notify: fire first certbot push
   tags: cert_master_service
 
@@ -34,6 +35,7 @@
       Type=oneshot
       ExecStart=/usr/local/sbin/certbot-push-replica.sh %i
     force: true
+  register: replica_pushing_service
   notify: fire first certbot push
   tags: cert_master_service
 
@@ -54,6 +56,7 @@
       [Install]
       WantedBy=timers.target
     force: true
+  register: replica_pushing_timer
   notify: fire first certbot push
   tags: cert_master_service
 
@@ -62,7 +65,9 @@
     name: certbot-push@{{ item }}.timer
     state: stopped
     enabled: true
-    daemon_reload: true
+    daemon_reload: "{{ replica_pushing_script is changed or
+                       replica_pushing_service is changed or
+                       replica_pushing_timer is changed }}"
   loop: "{{ certbot_master_replica_hosts }}"
   notify: fire first certbot push
   tags: cert_master_service
@@ -75,7 +80,7 @@
       #!/bin/bash
       # ansible-managed
       echo "$(date): start pushing to all replicas" >> /var/log/letsencrypt/letsencrypt.log
-      {% for host in certbot_master_replica_hosts %}
+      {% for host in certbot_master_replica_hosts |sort %}
       systemctl start certbot-push@{{ host }}.timer
       {% endfor %}
     force: true
