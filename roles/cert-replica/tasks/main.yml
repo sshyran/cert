@@ -2,11 +2,15 @@
 - name: use import to become root globally
   import_tasks: root.yml
   become: true
-  tags: cert_replica_all
+  tags:
+    - cert_replica_all
 
 - name: refresh host facts before delegating to master
   setup:
   when: certbot_master_host is defined
+  tags:
+    - cert_replica_master
+    - cert_replica_all
 
 - name: setup certbot master
   include_role:
@@ -27,5 +31,6 @@
 
 - name: run postponed handlers now
   include_tasks: flush-handlers.yml
-  tags: cert_replica_all
+  tags:
+    - cert_replica_all
 ...
