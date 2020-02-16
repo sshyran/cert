@@ -51,7 +51,7 @@
       [Timer]
       OnCalendar=*-*-* *:00/{{ certbot_push_attempt_interval_minutes }}
       RandomizedDelaySec=30
-      Persistent=true
+      Persistent=false
 
       [Install]
       WantedBy=timers.target
