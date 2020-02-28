@@ -29,6 +29,9 @@
   delegate_to: "{{ item }}"
   delegate_facts: true
   loop: "{{ certbot_master_replica_hosts }}"
+  ## workaround for mitogen failures
+  register: replica_setup_result
+  until: replica_setup_result is successful
 
 - name: configure ssh aliases for certbot replicas
   blockinfile:
@@ -47,7 +50,7 @@
         UserKnownHostsFile /dev/null
         LogLevel ERROR
     marker: "# == {mark} certbot replica - {{ replica }} =="
-    # insert before any "glob overriding" entries
+    ## insert before any "glob overriding" entries
     insertbefore: '^Host .*[*]'
   vars:
     replica_vars: "{{ hostvars[replica] }}"
