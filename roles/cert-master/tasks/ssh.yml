@@ -23,7 +23,14 @@
   debug:
     msg: "Replicas: {{ certbot_master_replica_hosts |join(' ') }}"
 
-- name: configure ssh aliases for certbot replica hosts
+- name: refresh replica facts for certbot replicas
+  setup:
+  become: false
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  loop: "{{ certbot_master_replica_hosts }}"
+
+- name: configure ssh aliases for certbot replicas
   blockinfile:
     path: ~/.ssh/config
     create: true
@@ -40,7 +47,7 @@
         UserKnownHostsFile /dev/null
         LogLevel ERROR
     marker: "# == {mark} certbot replica - {{ replica }} =="
-    # insert before any "glob overriding" entry
+    # insert before any "glob overriding" entries
     insertbefore: '^Host .*[*]'
   vars:
     replica_vars: "{{ hostvars[replica] }}"
