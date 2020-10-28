@@ -26,6 +26,14 @@ Certbot master will access replica via rsync/ssh using this user
     certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 Keys for ssh access from the certbot master host.
 
+    certbot_replica_user_interactive: false
+    certbot_replica_ssh_keys_interactive: none
+Subset of accepted ssh keys with interactive features enabled.
+Disabled by default as unused in this role,
+but the settings exist for cross-idempotence with
+role [ivansible.dev-user](https://github.com/ivansible/dev-user/#variables).
+See there for details.
+
     certbot_master_host: None
 When defined, this must be inventory hostname of the master host
 for currently running `ansible_play_hosts` list of replicas.

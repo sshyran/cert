@@ -5,11 +5,18 @@
   authorized_key:
     user: "{{ certbot_replica_user }}"
     key: "{{ lookup('pipe', keygen_cmd) }}"
-    comment: "{{ item |basename |regex_replace('[.]key$') }}"
+    comment: "{{ key_name }}"
+    key_options: "{{ key_options }}"
+    state: present
   vars:
     # deliberately use ';' in the pipe to ignore chmod errors
     keygen_cmd: 'chmod 600 "{{ item }}"; ssh-keygen -y -f "{{ item }}"'
+    key_name: "{{ item |basename |regex_replace('[.]key$') }}"
+    interactive: "{{ certbot_replica_user_interactive |bool and
+                     item in certbot_replica_ssh_keys_interactive |d([],true) }}"
+    interactive_env: 'environment="BASH_ENV=~/.bashrc",environment="_SSH_=i"'
+    key_options: "{{ interactive |ternary(interactive_env, omit) }}"
   loop: "{{ certbot_replica_ssh_keys }}"
   loop_control:
-    label: "{{ item |basename }}"
+    label: "{{ key_name }}{{ interactive |ternary('+','') }}"
 ...
