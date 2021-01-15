@@ -2,7 +2,7 @@
 # handlers for ivansible.cert_master
 
 - name: fire first certbot push
-  command: /etc/letsencrypt/renewal-hooks/post/push
+  command: "{{ certbot_post_dir }}/push"
   ignore_errors: true
   become: true
 ...

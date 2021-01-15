@@ -1,0 +1,7 @@
+# ansible-managed
+[Unit]
+Description=Certbot push to replica (ansible managed)
+
+[Service]
+Type=oneshot
+ExecStart={{ certbot_push_script }} %i

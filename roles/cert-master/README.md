@@ -9,6 +9,8 @@ propagation is done by `pushing`: it is master host that initiates
 accesses to replicas. This avoids keeping critical master ssh keys
 on replicas.
 
+This role assumes that certbot package has been already installed.
+
 
 ## Requirements
 
@@ -21,6 +23,10 @@ Available variables are listed below, along with default values.
 
     certbot_master_replica_hosts: []
 Inventory hostnames of replicas connected to the master host.
+
+    certbot_master_replica_hosts_arg: null
+This comma separated string allows to override list of replicas
+from ansible command line.
 
     certbot_replica_ssh_keys: ...
 Keys for ssh access from the certbot master host. One key is usually enough.
@@ -49,7 +55,9 @@ may be used, there is no ansible dependency. On the other hand, since
 are so tightly coupled, the master role is not invoked from playbooks
 directly, but rather imported by the slave role.
 
-Also depends on `ivansible.lin_base` for `lin_ssh_keys_files`.
+Also depends on:
+  - `ivansible.lin_base` for `lin_ssh_keys_files`
+  - `ivansible.cert_base` got common certbot settings and tasks
 
 
 ## Implementation details
@@ -91,4 +99,4 @@ MIT
 
 ## Author Information
 
-Created in 2018-2020 by [IvanSible](https://github.com/ivansible)
+Created in 2018-2021 by [IvanSible](https://github.com/ivansible)

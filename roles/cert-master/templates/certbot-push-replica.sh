@@ -1,7 +1,7 @@
 #!/bin/bash
 NAME=$1
-LOG=/var/log/letsencrypt/letsencrypt.log
-LETEMP={{ certbot_replica_tempdir }}
+LOG="{{ certbot_log_file }}"
+LETEMP="{{ certbot_replica_tempdir }}"
 
 [ -n "$NAME" ] || exit 1
 echo "$(date): start pushing to $NAME" >> $LOG
@@ -9,7 +9,7 @@ echo "$(date): start pushing to $NAME" >> $LOG
 SUCCESS=$(
     (
         rsync -z -a --delete \
-              /etc/letsencrypt/ \
+              {{ certbot_dir }}/ \
               $NAME.certbot-replica:$LETEMP/ &&
 
         ssh $NAME.certbot-replica \
