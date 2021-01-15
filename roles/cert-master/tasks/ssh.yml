@@ -9,8 +9,10 @@
   assert:
     that: "certbot_replica_ssh_keys | length > 0"
     msg: "access keys not found!"
+  when: not certbot_master_molecule_test |bool
 
 - name: install ssh keys
+  ## this step requires molecule/default/files
   copy:
     src: "{{ item }}"
     dest: ~/.ssh/

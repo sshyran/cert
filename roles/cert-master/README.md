@@ -1,5 +1,8 @@
 # ivansible.cert_master
 
+[![Github Test Status](https://github.com/ivansible/cert-master/workflows/Molecule%20test/badge.svg?branch=master)](https://github.com/ivansible/cert-master/actions)
+[![Ansible Galaxy](https://img.shields.io/badge/galaxy-ivansible.cert__master-68a.svg?style=flat)](https://galaxy.ansible.com/ivansible/cert_master/)
+
 This role configures a dedicated host, which is requesting
 certificates from letsencrypt, to automatically propagate them to a number
 of replica hosts. This design allows for higher security: critical

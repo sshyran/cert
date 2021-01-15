@@ -4,6 +4,7 @@
 certbot_master_replica_hosts_arg: ~
 certbot_master_replica_hosts: "{{ [] if certbot_master_replica_hosts_arg is none else certbot_master_replica_hosts_arg.split(',') }}"
 
+certbot_master_molecule_test: false
 certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 
 certbot_push_attempt_interval_minutes: 15
