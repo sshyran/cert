@@ -35,6 +35,9 @@ from ansible command line.
 Keys for ssh access from the certbot master host. One key is usually enough.
 Must be the same on master and replica hosts.
 
+    certbot_master_refresh_facts: true
+Refresh facts about replicas (disable in case of network problems).
+
     certbot_push_attempt_interval_minutes: 15
 
 

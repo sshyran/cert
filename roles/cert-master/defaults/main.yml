@@ -7,6 +7,8 @@ certbot_master_replicas: "{{ [] if certbot_master_replicas_arg is none else cert
 certbot_master_molecule_test: false
 certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 
+certbot_master_refresh_facts: true
+
 certbot_push_attempt_interval_minutes: 15
 certbot_push_script: /usr/local/sbin/certbot-push-replica.sh
 certbot_push_systemd: /etc/systemd/system/certbot-push

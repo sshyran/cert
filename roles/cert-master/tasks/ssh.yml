@@ -34,6 +34,7 @@
   ## workaround for mitogen failures
   register: replica_setup_result
   until: replica_setup_result is successful
+  when: certbot_master_refresh_facts |bool
 
 - name: configure ssh aliases for certbot replicas
   blockinfile:
