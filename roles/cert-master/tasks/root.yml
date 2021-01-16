@@ -50,9 +50,12 @@
     name: "certbot-push@{{ item }}.timer"
     state: stopped
     enabled: true
-    daemon_reload: "{{ replica_pushing_script is changed or
-                       replica_pushing_service is changed or
-                       replica_pushing_timer is changed }}"
+    daemon_reload: "{{ reload_systemd }}"
+  vars:
+    script_changed: "{{ replica_pushing_script |d({}) is changed }}"
+    service_changed: "{{ replica_pushing_service |d({}) is changed }}"
+    timer_changed: "{{ replica_pushing_timer |d({}) is changed }}"
+    reload_systemd: "{{ script_changed or service_changed or timer_changed }}"
   loop: "{{ certbot_master_replicas }}"
   notify: fire first certbot push
   tags: cert_master_service
@@ -68,14 +71,7 @@
 
 
 - name: list all present certbot-push units
-  # noqa 303 - systemd module can't handle this task
-  shell:
-    systemctl list-units
-              --no-pager --no-legend
-              --all --type=service,timer
-              certbot-push@*
-              2>&1 |
-    tr '@.' ',' | cut -d, -f2 | sort -u
+  script: list-certbot-push-units.sh
   register: all_push_replicas
   changed_when: false
   ignore_errors: true
