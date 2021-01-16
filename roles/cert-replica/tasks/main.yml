@@ -5,30 +5,6 @@
   tags:
     - cert_replica_all
 
-- name: refresh host facts before delegating to master
-  setup:
-  when: certbot_master_host is defined
-  tags:
-    - cert_replica_master
-    - cert_replica_all
-
-- name: setup certbot master
-  include_role:
-    name: ivansible.cert_master
-    apply:
-      delegate_to: "{{ certbot_master_host }}"
-      tags:
-        - cert_replica_master
-        # deliberately not applying tag cert_replica_all
-        # - cert_replica_all
-  vars:
-    certbot_master_replica_hosts: "{{ ansible_play_hosts |sort }}"
-  run_once: true
-  when: certbot_master_host is defined
-  tags:
-    - cert_replica_master
-    - cert_replica_all
-
 - name: run postponed handlers now
   include_tasks: flush-handlers.yml
   tags:

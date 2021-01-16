@@ -37,12 +37,6 @@ but the settings exist for cross-idempotence with
 role [ivansible.dev-user](https://github.com/ivansible/dev-user/#variables).
 See there for details.
 
-    certbot_master_host: None
-When defined, this must be inventory hostname of the master host
-for currently running `ansible_play_hosts` list of replicas.
-The role `ivansible.cert_master` will be run on this host
-with current play hosts in parameter `certbot_master_replica_hosts`.
-
     certbot_group: ssl-cert
 Members of this unix group will have read access to certificates.
 This group must be the same on master and replica hosts.
