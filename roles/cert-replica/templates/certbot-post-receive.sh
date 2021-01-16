@@ -1,49 +1,59 @@
 #!/bin/bash
-LOG=/var/log/letsencrypt/letsencrypt.log
-LEGROUP={{ certbot_group }}
-LETEMP={{ certbot_replica_tempdir }}
+#set -x
 
-echo "$(date): start post-push actions" >> $LOG
+LESUBDIRS="archive live"
+LOG="{{ certbot_log_dir }}/letsencrypt.log"
+LEDIR="{{ certbot_dir }}"
+LEHOOKD="{{ certbot_hook_dir }}"
+LEGROUP="{{ certbot_group }}"
+LETEMP="{{ certbot_replica_tempdir }}"
+# shellcheck disable=SC1083
+LEHOME=~{{ certbot_replica_user }}
 
-# move temporary files to /etc/letsencrypt
-if [ -d ~{{ certbot_replica_user }}/$LETEMP ]
+# shellcheck disable=SC2129
+echo "$(date -Iseconds): start post-push actions" >> "$LOG"
+
+# move temporary files to {{ certbot_dir }}
+if [ -d "${LEHOME}/${LETEMP}" ]
 then
-    MSG="syncing $LETEMP"
-    echo "$(date): $MSG"
-    cd ~{{ certbot_replica_user }}
-    chown -R root:root $LETEMP
-    for subdir in archive live
+    MSG="syncing ${LETEMP}"
+    echo "$(date -Iseconds): $MSG"
+    cd "$LEHOME" || exit 1
+    chown -R root:root "$LETEMP"
+    for subdir in $LESUBDIRS
     do
         rsync -a --delete \
-              $LETEMP/$subdir/ \
-              /etc/letsencrypt/$subdir/
+              "${LETEMP}/${subdir}/" \
+              "${LEDIR}/${subdir}/"
     done
-    rm -rf $LETEMP
+    rm -rf "$LETEMP"
 else
-    MSG="missing $LETEMP"
-    echo "$(date): $MSG"
-fi >> $LOG 2>&1
+    MSG="missing ${LETEMP}"
+    echo "$(date -Iseconds): ${MSG}"
+fi >> "$LOG" 2>&1
 
 (
     # fix permissions on letsencrypt certificate directories
-    chown root:$LEGROUP /etc/letsencrypt/{archive,live}
-    chmod 0750 /etc/letsencrypt/{archive,live}
+    chown "root:${LEGROUP}" "$LEDIR"/{archive,live}
+    chmod 0750 "$LEDIR"/{archive,live}
 
     # fix permissions on letsencrypt private keys
-    find /etc/letsencrypt/archive -name privkey*.pem \
-         | xargs --no-run-if-empty chgrp $LEGROUP
-    find /etc/letsencrypt/archive -name privkey*.pem \
+    # shellcheck disable=SC2038
+    find "${LEDIR}/archive" -name "privkey*.pem" \
+         | xargs --no-run-if-empty chgrp "$LEGROUP"
+    # shellcheck disable=SC2038
+    find "${LEDIR}/archive" -name "privkey*.pem" \
          | xargs --no-run-if-empty chmod o=
-) >> $LOG 2>&1
+) >> "$LOG" 2>&1
 
 # run hook scripts
-for script in /etc/letsencrypt/renewal-hooks/{pre,deploy,post}/*
+for script in "$LEHOOKD"/{pre,deploy,post}/*
 do
-    if [ -x $script ]; then
-        echo "$(date): running $script"
-        $script
+    if [ -x "$script" ]; then
+        echo "$(date -Iseconds): running ${script}"
+        "$script"
     fi
-done  >> $LOG 2>&1
+done  >> "$LOG" 2>&1
 
 # final message
-echo "$(date): pushed successfully (slave $MSG)" | tee -a $LOG
+echo "$(date -Iseconds): pushed successfully (slave ${MSG})" | tee -a "$LOG"

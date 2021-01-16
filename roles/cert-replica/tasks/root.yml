@@ -1,10 +1,16 @@
 ---
+- name: certbot-docker on replicas is not yet supported
+  assert:
+    that: not certbot_use_docker |bool
+    quiet: true
+    fail_msg: "certbot-docker on replicas is not yet supported"
+
 - name: add certbot ppa repository
   apt_repository:
     repo: ppa:certbot/certbot
-    # if lsb_release executable is not installed on target,
-    # the python aptsource module defaults to the codename "sid"
-    # and fails. as a workaround, set codename here explicitly.
+    ## if lsb_release executable is not installed on target,
+    ## the python aptsource module defaults to the codename "sid"
+    ## and fails. as a workaround, set codename here explicitly.
     codename: "{{ ansible_lsb.codename }}"
     filename: certbot
     mode: 0644
@@ -37,7 +43,7 @@
 
 - name: grant certbot group access to letsencrypt files
   file:
-    path: /etc/letsencrypt/{{ item }}
+    path: "{{ certbot_dir }}/{{ item }}"
     state: directory
     owner: root
     group: "{{ certbot_group }}"
@@ -69,7 +75,7 @@
 
 - name: create directory for log file
   file:
-    path: /var/log/letsencrypt
+    path: "{{ certbot_log_dir }}"
     state: directory
     owner: root
     mode: 0700
@@ -77,14 +83,11 @@
 
 - name: create directory for hooks
   file:
-    path: /etc/letsencrypt/renewal-hooks/{{ item }}
+    path: "{{ certbot_hook_dir }}/{{ item }}"
     state: directory
     owner: root
     mode: 0755
-  loop:
-    - pre
-    - post
-    - deploy
+  loop: [pre, post, deploy]
   tags: cert_replica_receive
 
 - name: create post-receive handler script
