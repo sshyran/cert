@@ -23,14 +23,14 @@
 
 - name: print list of active replica hosts
   debug:
-    msg: "Replicas: {{ certbot_master_replica_hosts |join(' ') }}"
+    msg: "Replicas: {{ certbot_master_replicas |join(' ') |d('none',true) }}"
 
 - name: refresh replica facts for certbot replicas
   setup:
   become: false
   delegate_to: "{{ item }}"
   delegate_facts: true
-  loop: "{{ certbot_master_replica_hosts }}"
+  loop: "{{ certbot_master_replicas }}"
   ## workaround for mitogen failures
   register: replica_setup_result
   until: replica_setup_result is successful
@@ -57,7 +57,7 @@
   vars:
     replica_vars: "{{ hostvars[replica] }}"
     ssh_key_file: "~/.ssh/{{ certbot_replica_ssh_keys |first |basename }}"
-  loop: "{{ certbot_master_replica_hosts }}"
+  loop: "{{ certbot_master_replicas }}"
   loop_control:
     loop_var: replica
 ...

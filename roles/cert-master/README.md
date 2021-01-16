@@ -24,10 +24,10 @@ None
 
 Available variables are listed below, along with default values.
 
-    certbot_master_replica_hosts: []
+    certbot_master_replicas: []
 Inventory hostnames of replicas connected to the master host.
 
-    certbot_master_replica_hosts_arg: null
+    certbot_master_replicas_arg: null
 This comma separated string allows to override list of replicas
 from ansible command line.
 
@@ -90,10 +90,8 @@ an attempt succesful only when it sees this message.
     - hosts: master-host
       roles:
          - role: ivansible.cert_master
-           certbot_master_replica_hosts:
-             - slave-host1
-             - slave-host2
-            certbot_push_attempt_interval_minutes: 30
+           certbot_master_replicas_arg: slave-host1,slave-host2
+           certbot_push_attempt_interval_minutes: 30
 
 
 ## License

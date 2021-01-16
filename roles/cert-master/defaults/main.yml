@@ -1,8 +1,8 @@
 ---
 # defaults for ivansible.cert_master
 
-certbot_master_replica_hosts_arg: ~
-certbot_master_replica_hosts: "{{ [] if certbot_master_replica_hosts_arg is none else certbot_master_replica_hosts_arg.split(',') }}"
+certbot_master_replicas_arg: ~
+certbot_master_replicas: "{{ [] if certbot_master_replicas_arg is none else certbot_master_replicas_arg.split(',') }}"
 
 certbot_master_molecule_test: false
 certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"

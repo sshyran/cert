@@ -53,7 +53,7 @@
     daemon_reload: "{{ replica_pushing_script is changed or
                        replica_pushing_service is changed or
                        replica_pushing_timer is changed }}"
-  loop: "{{ certbot_master_replica_hosts }}"
+  loop: "{{ certbot_master_replicas }}"
   notify: fire first certbot push
   tags: cert_master_service
 
@@ -81,16 +81,31 @@
   ignore_errors: true
   tags: cert_master_cleanup
 
+- name: warn user if push units not found
+  debug:
+    msg:
+      - "WARNING!"
+      - "Please add more replicas to the play"
+      - "or override with `certbot_master_replicas_arg`"
+  when: not all_push_replicas.stdout_lines |d([],true)
+  tags: cert_master_cleanup
+
 - name: remove extra certbot-push timers and services (ok to fail)
   systemd:
-    name: certbot-push@{{ item.0 }}.{{ item.1 }}
+    name: "certbot-push@{{ unit_name }}"
     state: stopped
     enabled: false
     daemon_reload: true
   ignore_errors: true
-  loop: "{{ all_push_replicas.stdout_lines
-          | difference(certbot_master_replica_hosts)
-          | product(['timer', 'service'])
-          | list }}"
+  loop: "{{ extra_units }}"
+  loop_control:
+    label: "{{ unit_name }}"
+  vars:
+    unit_name: "{{ item.0 }}.{{ item.1 }}"
+    unit_types: [timer, service]
+
+    push_replicas: "{{ all_push_replicas.stdout_lines |d([], true) |sort }}"
+    extra_replicas: "{{ push_replicas |difference(certbot_master_replicas) }}"
+    extra_units: "{{ extra_replicas |product(unit_types) |list }}"
   tags: cert_master_cleanup
 ...
