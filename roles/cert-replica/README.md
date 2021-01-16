@@ -72,7 +72,9 @@ roles are so tightly coupled that we go for this dependency.
 Moreover, with `letsencrypt/cloudflare` there can be only one host node
 requesting certificates.
 
-Also imports variable `lin_ssh_keys_files` from the role [lin_base](https://github.com/ivansible/lin-base).
+Also depends on:
+  - `ivansible.lin_base` for `lin_ssh_keys_files`
+  - `ivansible.cert_base` got common certbot settings and tasks
 
 
 ## Example Playbook
@@ -88,4 +90,4 @@ MIT
 
 ## Author Information
 
-Created in 2018-2020 by [IvanSible](https://github.com/ivansible)
+Created in 2018-2021 by [IvanSible](https://github.com/ivansible)

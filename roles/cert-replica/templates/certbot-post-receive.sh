@@ -2,7 +2,7 @@
 #set -x
 
 LESUBDIRS="archive live"
-LOG="{{ certbot_log_dir }}/letsencrypt.log"
+LOG="{{ certbot_log_file }}"
 LEDIR="{{ certbot_dir }}"
 LEHOOKD="{{ certbot_hook_dir }}"
 LEGROUP="{{ certbot_group }}"

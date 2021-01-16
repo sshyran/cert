@@ -1,59 +1,20 @@
 ---
-- name: certbot-docker on replicas is not yet supported
-  assert:
-    that: not certbot_use_docker |bool
-    quiet: true
-    fail_msg: "certbot-docker on replicas is not yet supported"
-
-- name: add certbot ppa repository
-  apt_repository:
-    repo: ppa:certbot/certbot
-    ## if lsb_release executable is not installed on target,
-    ## the python aptsource module defaults to the codename "sid"
-    ## and fails. as a workaround, set codename here explicitly.
-    codename: "{{ ansible_lsb.codename }}"
-    filename: certbot
-    mode: 0644
-    update_cache: true
+- name: install certbot
+  import_role:
+    name: ivansible.cert_base
+    tasks_from: install.yml
+  vars:
+    certbot_stop_timer: true
   tags: cert_replica_install
-  when: ansible_lsb.release is version('20.04','<')
 
-- name: install certbot and rsync packages
+- name: install rsync package
   apt:
-    name:
-      - certbot      # creates /etc/letsecnrypt
-      - rsync        # rsync client
-      - python3-pip  # just in case
-      - ssl-cert     # for ssl-cert unix group
+    name: rsync
     state: present
     install_recommends: false
   notify:
-    - run certbot once to create directory structure in /etc
     - run receive handler once to fix file/directory permissions
   tags: cert_replica_install
-
-
-- name: create unix group for letsencrypt certificate access
-  group:
-    name: "{{ certbot_group }}"
-    state: present
-  notify:
-    - run receive handler once to fix file/directory permissions
-  tags: cert_replica_group
-
-- name: grant certbot group access to letsencrypt files
-  file:
-    path: "{{ certbot_dir }}/{{ item }}"
-    state: directory
-    owner: root
-    group: "{{ certbot_group }}"
-    mode: 0750
-  loop:
-    - archive
-    - live
-  notify:
-    - run receive handler once to fix file/directory permissions
-  tags: cert_replica_group
 
 
 - name: configure sudoers
@@ -65,38 +26,10 @@
   tags: cert_replica_ssh
 
 
-- name: disable certbot certificate renewal service
-  systemd:
-    name: certbot.timer
-    state: stopped
-    enabled: false
-    daemon_reload: true
-  tags: cert_replica_receive
-
-- name: create directory for log file
-  file:
-    path: "{{ certbot_log_dir }}"
-    state: directory
-    owner: root
-    mode: 0700
-  tags: cert_replica_receive
-
-- name: create directory for hooks
-  file:
-    path: "{{ certbot_hook_dir }}/{{ item }}"
-    state: directory
-    owner: root
-    mode: 0755
-  loop: [pre, post, deploy]
-  tags: cert_replica_receive
-
 - name: create post-receive handler script
   template:
     src: certbot-post-receive.sh
     dest: "{{ certbot_replica_handler }}"
-    owner: root
     mode: 0700
-  notify:
-    - run receive handler once to fix file/directory permissions
   tags: cert_replica_receive
 ...

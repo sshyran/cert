@@ -1,14 +1,3 @@
 ---
 # handlers for ivansible.cert_replica
-
-- name: run certbot once to create directory structure in /etc
-  command: certbot
-  failed_when: false
-  become: true
-
-- name: run receive handler once to fix file/directory permissions
-  command: "{{ certbot_replica_handler }}"
-  become: true
-  ignore_errors: true
-  no_log: "{{ hide_secrets |bool }}"
 ...
