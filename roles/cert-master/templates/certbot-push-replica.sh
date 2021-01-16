@@ -1,28 +1,32 @@
 #!/bin/bash
+#set -x
+
 NAME=$1
 LOG="{{ certbot_log_file }}"
+LEDIR="{{ certbot_dir }}"
 LETEMP="{{ certbot_replica_tempdir }}"
+HANDLER="{{ certbot_replica_handler }}"
 
-[ -n "$NAME" ] || exit 1
-echo "$(date): start pushing to $NAME" >> $LOG
+[[ $NAME ]] || exit 1
+echo "$(date -Iseconds): start pushing to ${NAME}" | tee -a "$LOG"
 
 SUCCESS=$(
     (
+        # shellcheck disable=SC2029
         rsync -z -a --delete \
-              {{ certbot_dir }}/ \
-              $NAME.certbot-replica:$LETEMP/ &&
-
-        ssh $NAME.certbot-replica \
-            sudo {{ certbot_replica_handler }}
+              "$LEDIR"/ \
+              "${NAME}.certbot-replica:${LETEMP}/" && \
+        ssh "${NAME}.certbot-replica" \
+            sudo "$HANDLER"
     ) 2>&1 \
-    | tee -a $LOG \
-    | tail -2 | grep "pushed successfully" \
-    | wc -l
+    | tee -a "$LOG" \
+    | tail -2 \
+    | grep -c "pushed successfully"
 )
 
-if [ x"$SUCCESS" = x"1" ]; then
-    echo "$(date): stop my own timer $NAME"
-    systemctl stop certbot-push@$NAME.timer
-fi >> $LOG 2>&1
+if [[ $SUCCESS = 1 ]]; then
+    echo "$(date -Iseconds): stop push-timer ${NAME}"
+    systemctl stop "certbot-push@${NAME}.timer"
+fi >> "$LOG" 2>&1
 
-echo "$(date): done pushing to $NAME" >> $LOG
+echo "$(date -Iseconds): done pushing to ${NAME}" | tee -a "$LOG"
