@@ -1,6 +1,6 @@
 # ivansible.cert_replica
 
-[![Github Test Status](https://github.com/ivansible/cert-replica/workflows/Molecule%20test/badge.svg?branch=master)](https://github.com/ivansible/cert-replica/actions)
+[![Github Test Status](https://github.com/ivansible/cert-replica/workflows/test/badge.svg?branch=master)](https://github.com/ivansible/cert-replica/actions)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-ivansible.cert__replica-68a.svg?style=flat)](https://galaxy.ansible.com/ivansible/cert_replica/)
 
 This role configures a host for receiving new letsencrypt certificates
