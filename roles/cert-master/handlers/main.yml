@@ -3,6 +3,6 @@
 
 - name: fire first certbot push
   command: "{{ certbot_post_dir }}/push"
-  ignore_errors: true
+  failed_when: false
   become: true
 ...
