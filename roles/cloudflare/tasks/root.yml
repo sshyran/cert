@@ -1,7 +1,7 @@
 ---
 - name: install certbot
   import_role:
-    name: ivansible.cert_base
+    name: ivansible.base.cert
     tasks_from: install.yml
   tags: cert_cf_install
 
