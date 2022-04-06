@@ -16,5 +16,5 @@
 - name: run certbot update script once
   command: "{{ certbot_update_script }}"
   become: true
-  ignore_errors: true
+  failed_when: false
 ...
