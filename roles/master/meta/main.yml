@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - ivansible.base.linux  # for lin_ssh_keys_files etc.
+  - ivansible.base.linux  # for lin_ssh_keys_files, is_molecule_test, etc.
   - ivansible.base.cert   # for common certbot settings and tasks
 
 galaxy_info:
