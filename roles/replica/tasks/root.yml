@@ -1,6 +1,6 @@
 ---
 - name: install certbot
-  import_role:
+  ansible.builtin.import_role:
     name: ivansible.base.cert
     tasks_from: install.yml
   vars:
@@ -8,7 +8,7 @@
   tags: cert_replica_install
 
 - name: install rsync package
-  apt:
+  ansible.builtin.apt:
     name: rsync
     state: present
     install_recommends: false
@@ -18,16 +18,16 @@
 
 
 - name: configure sudoers
-  import_tasks: sudo.yml
+  ansible.builtin.import_tasks: sudo.yml
   tags: cert_replica_sudo
 
 - name: authorize ssh keys with pull user
-  import_tasks: keys.yml
+  ansible.builtin.import_tasks: keys.yml
   tags: cert_replica_ssh
 
 
 - name: create post-receive handler script
-  template:
+  ansible.builtin.template:
     src: certbot-post-receive.sh
     dest: "{{ certbot_replica_handler }}"
     mode: 0700

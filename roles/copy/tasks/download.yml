@@ -1,6 +1,6 @@
 ---
 - name: allocate transient certbot archive on master
-  tempfile:
+  ansible.builtin.tempfile:
     state: file
     prefix: ansible.letsencrypt.certs.
     suffix: .tar.gz
@@ -9,7 +9,7 @@
   notify: remove temporary certbot archive on master
 
 - name: allocate transient certbot archive on controller
-  tempfile:
+  ansible.builtin.tempfile:
     state: file
     prefix: ansible.certbot-certs.
     suffix: .tar.gz
@@ -18,7 +18,7 @@
   notify: remove temporary certbot archive on controller
 
 - name: fill temporary certbot archive on master with certificates
-  archive:
+  community.general.archive:
     path:
       - "{{ certbot_live_dir }}"
       - "{{ certbot_arch_dir }}"
@@ -28,7 +28,7 @@
   become: true
 
 - name: download archived certificates from master to controller
-  fetch:
+  ansible.builtin.fetch:
     src: "{{ _cert_master_archive.path }}"
     dest: "{{ _cert_controller_archive.path }}"
     flat: true

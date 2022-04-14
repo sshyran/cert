@@ -1,24 +1,24 @@
 ---
 - name: install certbot
-  import_role:
+  ansible.builtin.import_role:
     name: ivansible.base.cert
     tasks_from: install.yml
   tags: cert_master_install
 
 - name: install rsync package
-  apt:
+  ansible.builtin.apt:
     name: rsync
     state: present
   tags: cert_master_install
 
 
 - name: configure ssh keys and aliases for root user to access replicas
-  import_tasks: ssh.yml
+  ansible.builtin.import_tasks: ssh.yml
   tags: cert_master_ssh
 
 
 - name: create replica pushing script
-  template:
+  ansible.builtin.template:
     src: certbot-push-replica.sh
     dest: "{{ certbot_push_script }}"
     mode: 0700
@@ -27,7 +27,7 @@
   tags: cert_master_service
 
 - name: create replica pushing service
-  template:
+  ansible.builtin.template:
     src: certbot-push.service
     dest: "{{ certbot_push_systemd }}@.service"
     mode: 0644
@@ -37,7 +37,7 @@
 
 
 - name: create replica pushing timer
-  template:
+  ansible.builtin.template:
     src: certbot-push.timer
     dest: "{{ certbot_push_systemd }}@.timer"
     mode: 0644
@@ -46,7 +46,7 @@
   tags: cert_master_service
 
 - name: enable pushing timers for all replicas (yet inactive)
-  systemd:
+  ansible.builtin.systemd:
     name: "certbot-push@{{ item }}.timer"
     state: stopped
     enabled: true
@@ -62,7 +62,7 @@
 
 
 - name: create global pushing script
-  template:
+  ansible.builtin.template:
     src: certbot-push-global.sh
     dest: "{{ certbot_post_dir }}/push"
     mode: 0750
@@ -71,14 +71,14 @@
 
 
 - name: list all present certbot-push units
-  script: list-certbot-push-units.sh
+  ansible.builtin.script: list-certbot-push-units.sh
   register: all_push_replicas
   changed_when: false
   ignore_errors: true
   tags: cert_master_cleanup
 
 - name: warn user if push units not found
-  debug:
+  ansible.builtin.debug:
     msg:
       - "WARNING!"
       - "Please add more replicas to the play"
@@ -87,7 +87,7 @@
   tags: cert_master_cleanup
 
 - name: remove extra certbot-push timers and services (ok to fail)
-  systemd:
+  ansible.builtin.systemd:
     name: "certbot-push@{{ unit_name }}"
     state: stopped
     enabled: false

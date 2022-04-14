@@ -1,19 +1,19 @@
 ---
 - name: ensure that .ssh directory exists
-  file:
+  ansible.builtin.file:
     path: ~/.ssh
     state: directory
     mode: 0700
 
 - name: verify that ssh keys are configured
-  assert:
+  ansible.builtin.assert:
     that: "certbot_replica_ssh_keys | length > 0"
     msg: "access keys not found!"
   when: not is_molecule_test |bool
 
 - name: install ssh keys
   ## this step requires molecule/default/files
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: ~/.ssh/
     mode: 0400
@@ -22,11 +22,11 @@
     label: "{{ item | basename }}"
 
 - name: print list of active replica hosts
-  debug:
+  ansible.builtin.debug:
     msg: "Replicas: {{ certbot_master_replicas |join(' ') |d('none',true) }}"
 
 - name: refresh replica facts for certbot replicas
-  setup:
+  ansible.builtin.setup:
   become: false
   delegate_to: "{{ item }}"
   delegate_facts: true
@@ -37,7 +37,7 @@
   when: certbot_master_refresh_facts |bool
 
 - name: configure ssh aliases for certbot replicas
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: ~/.ssh/config
     create: true
     mode: 0600

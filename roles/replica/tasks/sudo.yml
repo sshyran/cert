@@ -2,14 +2,14 @@
 # steps taken from role ivansible.lin_enter task tune.yml
 
 - name: remove requiretty from sudoers
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/sudoers
     regexp: '^(Defaults\s+requiretty.*)'
     state: absent
     backup: true
 
 - name: enable password-less sudo for pull user
-  copy:
+  ansible.builtin.copy:
     content: |
       # Allow sudo group members to execute commands without password
       %sudo  ALL=(ALL) NOPASSWD:ALL
@@ -19,7 +19,7 @@
     mode: 0440
 
 - name: remove old-style no-passwd file
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:

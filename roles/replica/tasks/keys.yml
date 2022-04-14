@@ -2,7 +2,7 @@
 # steps taken from task keys.yml in the role ivansible.lin_enter
 
 - name: authorize public ssh keys (and ensure keyfile permissions)
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ certbot_replica_user }}"
     key: "{{ lookup('pipe', keygen_cmd) }}"
     comment: "{{ key_name }}"

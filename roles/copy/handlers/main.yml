@@ -2,19 +2,19 @@
 # handlers for ivansible.cert_copy
 
 - name: remove temporary certbot archive on master
-  file:
+  ansible.builtin.file:
     path: "{{ _cert_master_archive.path }}"
     state: absent
   delegate_to: "{{ certbot_master_host }}"
 
 - name: remove temporary certbot archive on controller
-  file:
+  ansible.builtin.file:
     path: "{{ _cert_controller_archive.path }}"
     state: absent
   connection: local
 
 - name: run certbot update script once
-  command: "{{ certbot_update_script }}"
+  ansible.builtin.command: "{{ certbot_update_script }}"
   become: true
   failed_when: false
 ...

@@ -1,17 +1,17 @@
 ---
 - name: report domains for certificate '{{ name }}'
-  debug:
+  ansible.builtin.debug:
     msg: "{{ name }} >> {{ domains |join(' ') }}"
 
 - name: query old letsencrypt certificate '{{ name }}' (ok to fail)
-  openssl_certificate_info:
+  community.crypto.x509_certificate_info:
     path: "{{ cert_subdir }}/cert.pem"
   ignore_errors: true
   register: old_cert_info
   when: existing == 'autoremove'
 
 - name: remove old letsencrypt certificate '{{ name }}' (ok to fail)
-  command:
+  ansible.builtin.command:
     argv:
       - "{{ certbot_script }}"
       - delete
@@ -31,7 +31,7 @@
   when: existing == 'remove' or autoremove
 
 - name: update letsencrypt certificate '{{ name }}'
-  command:
+  ansible.builtin.command:
     argv:
       - "{{ certbot_script }}"
       - certonly
@@ -53,7 +53,7 @@
   tags: cert_cf_renew_cert
 
 - name: fix permissions of the private key '{{ name }}'
-  file:
+  ansible.builtin.file:
     path: "{{ cert_subdir }}/privkey.pem"
     owner: root
     group: "{{ certbot_group }}"
@@ -62,7 +62,7 @@
   tags: cert_cf_renew_cert
 
 - name: set directory permissions for certificate '{{ name }}'
-  file:
+  ansible.builtin.file:
     path: "{{ dir }}"
     state: directory
     owner: root

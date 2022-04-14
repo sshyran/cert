@@ -2,7 +2,7 @@
 # handlers for ivansible.cert_master
 
 - name: fire first certbot push
-  command: "{{ certbot_post_dir }}/push"
+  ansible.builtin.command: "{{ certbot_post_dir }}/push"
   failed_when: false
   become: true
 ...

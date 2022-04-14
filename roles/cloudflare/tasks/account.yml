@@ -1,6 +1,6 @@
 ---
 - name: directory for account files ({{ name }})
-  file:
+  ansible.builtin.file:
     path: "{{ account_dir }}"
     state: directory
     owner: root
@@ -8,21 +8,21 @@
 
 - name: create meta.json for account ({{ name }})
   # cannot use copy/content templating here because it changes key order
-  template:
+  ansible.builtin.template:
     src: account/meta.json.j2
     dest: "{{ account_dir }}/meta.json"
     owner: root
     mode: 0644
 
 - name: create regr.json for account ({{ name }})
-  template:
+  ansible.builtin.template:
     src: account/regr.json.j2
     dest: "{{ account_dir }}/regr.json"
     owner: root
     mode: 0644
 
 - name: create private_key.json for account ({{ name }})
-  template:
+  ansible.builtin.template:
     src: account/private_key.json.j2
     dest: "{{ account_dir }}/private_key.json"
     owner: root

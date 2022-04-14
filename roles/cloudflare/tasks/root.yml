@@ -1,13 +1,13 @@
 ---
 - name: install certbot
-  import_role:
+  ansible.builtin.import_role:
     name: ivansible.base.cert
     tasks_from: install.yml
   tags: cert_cf_install
 
 
 - name: create post-renewal hook to fix permissions of private keys
-  template:
+  ansible.builtin.template:
     src: etc/privkey-permissions.sh
     dest: "{{ certbot_post_dir }}/privkey-permissions"
     mode: 0750
@@ -17,14 +17,14 @@
 
 
 - name: create cloudflare configuration for certbot
-  template:
+  ansible.builtin.template:
     src: etc/dns-cloudflare.ini
     dest: "{{ certbot_dir }}/dns-cloudflare.ini"
     mode: 0600
   tags: cert_cf_config
 
 - name: create certbot configuration
-  template:
+  ansible.builtin.template:
     src: etc/cli.ini
     dest: "{{ certbot_dir }}/cli.ini"
     mode: 0600
@@ -32,7 +32,7 @@
 
 
 - name: setup letsencrypt account registration
-  include_tasks: account.yml
+  ansible.builtin.include_tasks: account.yml
   args:
     apply:
       become: true
@@ -54,7 +54,7 @@
 
 
 - name: produce letsencrypt certificates
-  include_tasks: certificate.yml
+  ansible.builtin.include_tasks: certificate.yml
   args:
     apply:
       become: true
@@ -80,7 +80,7 @@
 
 
 - name: renew certificates twice daily (using package timer, ok to fail)
-  systemd:
+  ansible.builtin.systemd:
     name: certbot.timer
     state: "{{ can_renew |ternary('started', 'stopped') }}"
     enabled: "{{ can_renew |bool }}"
@@ -99,7 +99,7 @@
   tags: cert_cf_renewal
 
 - name: renew certificates daily (using docker wrapper)
-  template:
+  ansible.builtin.template:
     src: etc/certbot-renew.sh
     dest: /etc/cron.daily/certbot-renew
     mode: 0755
@@ -109,7 +109,7 @@
 
 
 - name: fine-tune certbot logs
-  template:
+  ansible.builtin.template:
     src: etc/logrotate.cfg
     dest: /etc/logrotate.d/certbot
     mode: 0644
