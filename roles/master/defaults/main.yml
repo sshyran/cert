@@ -1,5 +1,5 @@
 ---
-# defaults for ivansible.cert_master
+## defaults for ivansible.cert_master
 
 certbot_master_replicas_arg: ~
 certbot_master_replicas: "{{ [] if certbot_master_replicas_arg is none else certbot_master_replicas_arg.split(',') }}"
@@ -12,7 +12,7 @@ certbot_push_attempt_interval_minutes: 15
 certbot_push_script: /usr/local/sbin/certbot-push-replica.sh
 certbot_push_systemd: /etc/systemd/system/certbot-push
 
-# the following settings must match the cert_replica role
+## the following settings must match the cert_replica role
 certbot_replica_handler: /usr/local/sbin/certbot-post-receive.sh
 certbot_replica_tempdir: .certbot.tmp
 ...

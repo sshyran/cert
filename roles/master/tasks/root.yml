@@ -56,6 +56,10 @@
     service_changed: "{{ replica_pushing_service |d({}) is changed }}"
     timer_changed: "{{ replica_pushing_timer |d({}) is changed }}"
     reload_systemd: "{{ script_changed or service_changed or timer_changed }}"
+  register: _enable_pushing_timers
+  failed_when:
+    - _enable_pushing_timers is failed
+    - not ansible_check_mode
   loop: "{{ certbot_master_replicas }}"
   notify: fire first certbot push
   tags: cert_master_service
