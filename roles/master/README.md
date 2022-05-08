@@ -49,6 +49,7 @@ Refresh facts about replicas (disable in case of network problems).
 - `cert_master_service` -- create replica pushing script,
                            global pushing script, services and timers
 - `cert_master_cleanup` -- remove stale certbot-push service and timer units
+- `cert_master_scripts` -- global and extra pushing scripts
 - `cert_master_all` -- all tasks
 
 

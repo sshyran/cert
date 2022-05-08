@@ -73,6 +73,20 @@
   notify: fire first certbot push
   tags: cert_master_service
 
+- name: create extra pushing scripts
+  ansible.builtin.copy:
+    dest: "{{ certbot_post_dir }}/{{ item.name }}"
+    content: "{{ item.script }}"
+    mode: 0750
+  when: item.script |d('')
+  loop: "{{ certbot_push_extra_scripts |d([],true) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: fire first certbot push
+  tags:
+    - cert_master_service
+    - cert_master_scripts
+
 
 - name: list all present certbot-push units
   ansible.builtin.script: list-certbot-push-units.sh

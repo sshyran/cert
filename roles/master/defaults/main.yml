@@ -4,6 +4,11 @@
 certbot_master_replicas_arg: ~
 certbot_master_replicas: "{{ [] if certbot_master_replicas_arg is none else certbot_master_replicas_arg.split(',') }}"
 
+certbot_push_extra_scripts: []
+# - name: script_name
+#   inventory_host: name_for_ssh_alias
+#   script: script_body
+
 certbot_replica_ssh_keys: "{{ lin_ssh_keys_files }}"
 
 certbot_master_refresh_facts: true

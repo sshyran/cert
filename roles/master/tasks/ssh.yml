@@ -46,8 +46,8 @@
         Hostname {{ replica_vars.ansible_host }}
         Port {{ replica_vars.ansible_port }}
         User {{ replica_vars.certbot_replica_user
-              | default(replica_vars.ansible_user_id)
-              | default(ansible_user_id) }}
+              | d(replica_vars.ansible_user_id)
+              | d(ansible_user_id) }}
         IdentityFile {{ ssh_key_file }}
         StrictHostKeyChecking no
         UserKnownHostsFile /dev/null
@@ -58,7 +58,10 @@
   vars:
     replica_vars: "{{ hostvars[replica] }}"
     ssh_key_file: "~/.ssh/{{ certbot_replica_ssh_keys |first |basename }}"
-  loop: "{{ certbot_master_replicas }}"
+    extra_ssh_replicas: "{{ certbot_push_extra_scripts |d([],true) |json_query('[].inventory_host') }}"
+  loop: "{{ certbot_master_replicas + extra_ssh_replicas }}"
   loop_control:
     loop_var: replica
+  tags:
+    - cert_master_scripts
 ...
